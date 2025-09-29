@@ -1,0 +1,15 @@
+{
+  "app_title": "Medicine Reminder",
+  "login_title": "Login",
+  "login": "Login",
+  "register_title": "Register",
+  "register": "Register",
+  "logout": "Logout",
+  "language": "Language:",
+  "add_medicine": "Add medicine",
+  "add_time": "Add time",
+  "save_medicine": "Save medicine",
+  "your_medicines": "Your medicines",
+  "upload_prescription": "Upload prescription",
+  "upload": "Upload"
+}

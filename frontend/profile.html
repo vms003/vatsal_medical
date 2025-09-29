@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Profile - Medicine Reminder</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      box-sizing: border-box;
+    }
+
+    input[readonly] {
+      background-color: #e9ecef;
+      cursor: not-allowed;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 15px;
+      background: #17a2b8;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #138496;
+    }
+
+    #msg {
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .back {
+      display: block;
+      margin-top: 15px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Your Profile</h2>
+    <form id="profileForm">
+      <label for="name">Name</label>
+      <input type="text" id="name" required>
+
+      <label for="email">Email</label>
+      <input type="email" id="email" readonly>
+
+      <label for="language">Language</label>
+      <select id="language">
+        <option value="en">English</option>
+        <option value="hi">Hindi</option>
+        <option value="gu">Gujarati</option>
+        <option value="es">Spanish</option>
+        <option value="fr">French</option>
+      </select>
+
+      <button type="submit">Update Profile</button>
+    </form>
+    <div id="msg"></div>
+    <a class="back" href="dashboard.html">← Back to Dashboard</a>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!token) {
+      window.location.href = "login.html";
+    }
+
+    // Pre-fill current user info
+    document.getElementById("name").value = user?.name || "";
+    document.getElementById("email").value = user?.email || "";
+    document.getElementById("language").value = user?.language || "en";
+
+    // Handle profile update
+    document.getElementById("profileForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const language = document.getElementById("language").value;
+
+      const res = await fetch("/api/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ name, language })
+      });
+
+      const data = await res.json();
+      const msgBox = document.getElementById("msg");
+
+      if (res.ok) {
+        msgBox.style.color = "green";
+        msgBox.innerText = "Profile updated successfully!";
+        // Update localStorage
+        localStorage.setItem("user", JSON.stringify(data.user));
+      } else {
+        msgBox.style.color = "red";
+        msgBox.innerText = data.error || "Update failed!";
+      }
+    });
+  </script>
+</body>
+
+</html>

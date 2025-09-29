@@ -1,0 +1,15 @@
+{
+  "app_title": "दवा रिमाइंडर",
+  "login_title": "लॉगिन",
+  "login": "लॉगिन",
+  "register_title": "रजिस्टर",
+  "register": "रजिस्टर",
+  "logout": "लॉगआउट",
+  "language": "भाषा:",
+  "add_medicine": "दवा जोड़ें",
+  "add_time": "समय जोड़ें",
+  "save_medicine": "दवा सहेजें",
+  "your_medicines": "आपकी दवाएँ",
+  "upload_prescription": "प्रिस्क्रिप्शन अपलोड करें",
+  "upload": "अपलोड"
+}
