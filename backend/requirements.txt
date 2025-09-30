@@ -1,6 +1,6 @@
-Flask
-pymysql
-bcrypt
+flask
 python-dotenv
+bcrypt
 pyjwt
+werkzeug
 gunicorn
