@@ -96,44 +96,69 @@
 
   <script>
     const token = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user"));
-
     if (!token) {
       window.location.href = "login.html";
     }
 
-    // Pre-fill current user info
-    document.getElementById("name").value = user?.name || "";
-    document.getElementById("email").value = user?.email || "";
-    document.getElementById("language").value = user?.language || "en";
+    // ✅ Fetch profile from API and populate form
+    async function loadProfile() {
+      try {
+        const res = await fetch("/api/profile", {
+          headers: { "Authorization": "Bearer " + token }
+        });
+        const data = await res.json();
 
-    // Handle profile update
+        if (data.user) {
+          document.getElementById("name").value = data.user.name || "";
+          document.getElementById("email").value = data.user.email || "";
+          document.getElementById("language").value = data.user.language || "en";
+
+          // Save latest user data in localStorage
+          localStorage.setItem("user", JSON.stringify(data.user));
+        } else {
+          throw new Error(data.error || "Failed to load profile");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Failed to load profile. Please login again.");
+        window.location.href = "login.html";
+      }
+    }
+
+    loadProfile();
+
+    // ✅ Update profile
     document.getElementById("profileForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-
       const name = document.getElementById("name").value.trim();
       const language = document.getElementById("language").value;
-
-      const res = await fetch("/api/profile", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
-        },
-        body: JSON.stringify({ name, language })
-      });
-
-      const data = await res.json();
       const msgBox = document.getElementById("msg");
 
-      if (res.ok) {
-        msgBox.style.color = "green";
-        msgBox.innerText = "Profile updated successfully!";
-        // Update localStorage
-        localStorage.setItem("user", JSON.stringify(data.user));
-      } else {
+      try {
+        const res = await fetch("/api/profile", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify({ name, language })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          msgBox.style.color = "green";
+          msgBox.innerText = "Profile updated successfully!";
+
+          // 🔁 Refresh profile data
+          await loadProfile();
+        } else {
+          msgBox.style.color = "red";
+          msgBox.innerText = data.error || "Update failed!";
+        }
+      } catch (err) {
         msgBox.style.color = "red";
-        msgBox.innerText = data.error || "Update failed!";
+        msgBox.innerText = "Something went wrong!";
       }
     });
   </script>
